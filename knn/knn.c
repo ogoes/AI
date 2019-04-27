@@ -8,9 +8,12 @@
 int LINE_SIZE = 0;
 int LINES_NUMBER = 0;
 
+int LENGTH = 0;
+
 Case TRAINING;
 
 void init () {
+  // TRAINING.asserts = 0;
   TRAINING.n_element = 0;
   TRAINING.size = 10;
   TRAINING.size_scale = 1;
@@ -80,7 +83,6 @@ int insert_element (Number * number, Element * element) {
   return 0;
 }
 
-
 void get_line_size (const char filename[]) {
   FILE * file = fopen(filename, "r");
 
@@ -95,7 +97,6 @@ void get_line_size (const char filename[]) {
 
   fclose(file);
 }
-
 
 double * parse_line (char * line) {
 
@@ -113,7 +114,6 @@ double * parse_line (char * line) {
 
 }
 
-
 void get_lines_number (const char filename[]) {
   FILE * file = fopen(filename, "r");
 
@@ -128,7 +128,6 @@ void get_lines_number (const char filename[]) {
 
   fclose(file);
 }
-
 
 int training (const char * filename) {
 
@@ -155,7 +154,7 @@ int training (const char * filename) {
     if (fgets(string, LINE_SIZE + 2, file) != NULL) {
       values = parse_line(string);
       ids = (int)values[VALUES_NUMBER];
-      insert_element(&numbers[ids], create_element(values));
+      create_element(values);
       values = NULL;
     }
     ++i;
@@ -164,7 +163,9 @@ int training (const char * filename) {
   fclose(file);
   return 0;
 }
-int testing (const char * filename) {
+int testing (const char * filename, int length) {
+
+  LENGTH = length;
 
   FILE * file = fopen(filename, "r");
   if (!file) return -1;
@@ -188,9 +189,13 @@ int testing (const char * filename) {
       E->id = ids;
       teste(E);
       free(E);
-      return -1;
+      // return -1;
     }
   }
+
+
+
+  printf("\n --- Para distância %i: %lu acertos -> %.3lf%%\n", LENGTH,TRAINING.asserts, 100*((double)TRAINING.asserts/(double)TRAINING.n_element));
 
   fclose(file);
   return 0;
@@ -215,48 +220,12 @@ void teste (Element * E) {
 
   sort_by_norm(norms);
 
-
-  for (unsigned int i = 0; i < TRAINING.n_element; ++i) {
-    printf("%lf\n", norms[i]->norm);
-  }
-
-  printf("\n");
-
-}
-
-unsigned int partition (Element ** normas, unsigned int pivo, unsigned int r) {
-  Element * aux = normas[r];
-	unsigned int i = pivo - 1;
-	for (unsigned int j = pivo; j < r; ++j) {
-		if (normas[j]->norm <= aux->norm) {
-			++i;
-			Element aaa = *normas[j];
-      *normas[j] = *normas[i];
-      *normas[i] = aaa;
-		}
-	}
-
-  Element aaa = *normas[i+1];
-  *normas[i+1] = *normas[r];
-  *normas[r] = aaa;
-
-	return i + 1;
-}
-
-void quick_sort (Element ** normas, unsigned int pivo, unsigned int r) {
-  printf("jdadsss\n");
-
-  if (pivo < r) {
-		unsigned int meio = partition(normas, pivo, r);
-		quick_sort(normas, pivo, meio-1);
-		quick_sort(normas, meio+1, r);
-	}
+  if (get_assert(norms) == E->id) TRAINING.asserts++;
 }
 
 void sort_by_norm (Element ** norms) {
   qsort (norms, TRAINING.n_element, sizeof (Element *), compare);
 }
-
 
 int compare (const void * a, const void * b) {
 
@@ -276,4 +245,26 @@ int compare (const void * a, const void * b) {
 double get_norm (const Element * E) {
 
   return E->norm;
+}
+
+int get_assert (Element ** elements) {
+  int eles_l = 0;
+  int counter[LENGTH];
+  int moda;
+
+  for (int i = 0; i < LENGTH; ++i) {
+    for (int j = i + 1; j < LENGTH; ++j) {
+      if (elements[i]->id == elements[j]->id) {
+        counter[i]++;
+        if (counter[i] > eles_l) {
+          eles_l = counter[i];
+          moda = i;
+        }
+      }
+      counter[i] = 0;
+    }
+  }
+
+
+  return elements[moda]->id;
 }

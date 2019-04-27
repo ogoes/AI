@@ -25,12 +25,13 @@ typedef struct cases {
   long n_element;
   long size;
   int size_scale;
+  long asserts;
 } Case;
 
 void init();
 
 int training (const char *);
-int testing (const char *);
+int testing (const char *, int);
 
 void get_line_size(const char *);
 void get_lines_number(const char *);
@@ -47,10 +48,9 @@ double calculate_norm (Element *, Element *);
 
 void teste(Element *);
 
-void quisk_sort (Element **, unsigned int, unsigned int);
-unsigned int partition (Element **, unsigned int, unsigned int);
-
 int compare (const void *, const void *);
 
 double get_norm(const Element *);
+
+int get_assert (Element **);
 #endif 

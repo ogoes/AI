@@ -5,12 +5,6 @@
 #include "knn.h"
 
 
-
-
-
-
-
-
 int main (int argc, char * argv[]) {
 
   if (argc != 3) {
@@ -22,8 +16,7 @@ int main (int argc, char * argv[]) {
 
 
   if (training("../data/treinamento.txt") < 0) return EXIT_FAILURE;
-  if (testing("../data/teste.txt") < 0) return EXIT_FAILURE;
+  if (testing("../data/teste.txt", 3) < 0) return EXIT_FAILURE;
 
-  
   return EXIT_SUCCESS;
 }
