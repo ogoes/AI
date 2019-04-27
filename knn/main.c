@@ -11,8 +11,7 @@
 
 
 
-int main (int argc, char ** argv) {
-
+int main (int argc, char * argv[]) {
 
   if (argc != 3) {
     errno = EBADF;
@@ -20,10 +19,10 @@ int main (int argc, char ** argv) {
     return EXIT_FAILURE;
   }
 
-  printf("Asdasd");
 
-  if (training(argv[1]) < 0) return EXIT_FAILURE;
-  if (testing(argv[2]) < 0) return EXIT_FAILURE;
+
+  if (training("../data/treinamento.txt") < 0) return EXIT_FAILURE;
+  if (testing("../data/teste.txt") < 0) return EXIT_FAILURE;
 
   
   return EXIT_SUCCESS;

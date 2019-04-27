@@ -28,8 +28,9 @@ typedef struct cases {
 } Case;
 
 void init();
-int training (char *);
-int testing (char *);
+
+int training (const char *);
+int testing (const char *);
 
 void get_line_size(const char *);
 void get_lines_number(const char *);
@@ -49,5 +50,7 @@ void teste(Element *);
 void quisk_sort (Element **, unsigned int, unsigned int);
 unsigned int partition (Element **, unsigned int, unsigned int);
 
+int compare (const void *, const void *);
 
+double get_norm(const Element *);
 #endif 

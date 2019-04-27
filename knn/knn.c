@@ -130,12 +130,12 @@ void get_lines_number (const char filename[]) {
 }
 
 
-int training (char * filename) {
-  printf("Asdasd");
+int training (const char * filename) {
 
 
   init();
   FILE * file = fopen(filename, "r");
+  if (!file) return -1;
 
   get_line_size(filename);
   get_lines_number(filename);
@@ -164,27 +164,31 @@ int training (char * filename) {
   fclose(file);
   return 0;
 }
-int testing (char * filename) {
+int testing (const char * filename) {
 
   FILE * file = fopen(filename, "r");
+  if (!file) return -1;
+
+  get_line_size(filename);
+  get_lines_number(filename);
 
   char string[LINE_SIZE + 1];
   double * values;
 
-  Element E;
 
   int ids = 0;
   while (!feof(file)) {
     if (fgets(string, LINE_SIZE + 2, file) != NULL) {
+
+      Element * E = (Element *) malloc(sizeof(Element));
       values = parse_line(string);
 
       ids = (int)values[VALUES_NUMBER];
-      E.values = values;
-      E.id = ids;
-
-      values = NULL;
-
-      teste(&E);
+      E->values = values;
+      E->id = ids;
+      teste(E);
+      free(E);
+      return -1;
     }
   }
 
@@ -211,9 +215,11 @@ void teste (Element * E) {
 
   sort_by_norm(norms);
 
+
   for (unsigned int i = 0; i < TRAINING.n_element; ++i) {
-    printf("%lf ", norms[i]->norm);
+    printf("%lf\n", norms[i]->norm);
   }
+
   printf("\n");
 
 }
@@ -224,27 +230,50 @@ unsigned int partition (Element ** normas, unsigned int pivo, unsigned int r) {
 	for (unsigned int j = pivo; j < r; ++j) {
 		if (normas[j]->norm <= aux->norm) {
 			++i;
-			Element * aaa = normas[j];
-      normas[j] = normas[i];
-      normas[i] = aaa;
+			Element aaa = *normas[j];
+      *normas[j] = *normas[i];
+      *normas[i] = aaa;
 		}
 	}
 
-  Element * aaa = normas[i+1];
-  normas[i+1] = normas[r];
-  normas[r] = aaa;
+  Element aaa = *normas[i+1];
+  *normas[i+1] = *normas[r];
+  *normas[r] = aaa;
 
 	return i + 1;
 }
 
 void quick_sort (Element ** normas, unsigned int pivo, unsigned int r) {
+  printf("jdadsss\n");
+
   if (pivo < r) {
-		int meio = partition(normas, pivo, r);
+		unsigned int meio = partition(normas, pivo, r);
 		quick_sort(normas, pivo, meio-1);
 		quick_sort(normas, meio+1, r);
 	}
 }
 
 void sort_by_norm (Element ** norms) {
-  quick_sort(norms, 0, TRAINING.n_element-1);
+  qsort (norms, TRAINING.n_element, sizeof (Element *), compare);
+}
+
+
+int compare (const void * a, const void * b) {
+
+  const void ** asa = (const void **) a;
+  const void ** aba = (const void **) b;
+
+
+  const double f = get_norm((const Element *) *asa);
+  const double s = get_norm((const Element *) *aba);
+
+
+  if (f > s) return  1;
+  if (f < s) return -1;
+  return 0;
+}
+
+double get_norm (const Element * E) {
+
+  return E->norm;
 }
