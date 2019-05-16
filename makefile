@@ -4,6 +4,13 @@ treinamento=./data/treinamento.txt
 teste=./data/teste.txt
 
 
+
+
+
+
+
+
+
 run-knn: knn
 	./knn $(treinamento) $(teste)
 knn:
